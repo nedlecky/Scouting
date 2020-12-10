@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{9abe2469-89c2-4aae-8be8-75d4f7a9d311}</ProjectGuid>
-    <RootNamespace>My8Puzzle1</RootNamespace>
+    <ProjectGuid>{36085a91-b1ab-4988-a594-839802b483dc}</ProjectGuid>
+    <RootNamespace>GenSimTemplate</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -139,7 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="8Puzzle1.cpp" />
+    <ClCompile Include="GenSimTemplate.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

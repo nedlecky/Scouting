@@ -215,7 +215,7 @@ int main()
 		count[RANDOM(N)]++;
 	for (int i = 1; i <= N;  i++)
 		printf("Count[%d]=%d\n", i, count[i]);
-	_getch();
+	char c=_getch();
 	//return 1;
 
 	clock_t start = std::clock();
@@ -250,7 +250,7 @@ int main()
 	printf("\nTotalFails=%d\nExecution Time = %.3f S\n", nTotalFails, (end - start) / 1000.0);
 
 	printf("press any key....");
-	_getch();
+	c=_getch();
 	return 0;
 }
 
