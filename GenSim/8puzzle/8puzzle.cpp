@@ -24,7 +24,7 @@ int LFSR8()
 	return SR;
 }
 
-int VRand(int max)
+int UniformInt(int max)
 {
 	int a = rand() % max;
 
@@ -120,7 +120,7 @@ void GenerateRandomAction(int* action, int* situation)
 	// pick a random move using the possible move table
 	int blankPos = situation[9];
 	int n = rndMove8[blankPos][0];
-	int move = rndMove8[blankPos][VRand(n) + 1];
+	int move = rndMove8[blankPos][UniformInt(n) + 1];
 
 	// build action = from,to
 	action[0] = blankPos;
@@ -139,7 +139,7 @@ void GenerateRandomAction2(int* action, int* situation)
 	while (move == lastBlankPos)
 	{
 		int n = rndMove8[blankPos][0];
-		move = rndMove8[blankPos][VRand(n) + 1];
+		move = rndMove8[blankPos][UniformInt(n) + 1];
 	}
 
 	// build action = from,to

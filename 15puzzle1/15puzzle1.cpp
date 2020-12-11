@@ -7,7 +7,7 @@
 
 using namespace std::chrono;
 
-int VRand(int max)
+int UniformInt(int max)
 {
 	int r = rand() % max;
 	return r;
@@ -137,7 +137,7 @@ void GenerateRandomAction(int* action, int* situation)
 	// pick a random move using the possible move table
 	int blankPos = situation[16];
 	int n = rndMove15[blankPos][0];
-	int move = rndMove15[blankPos][VRand(n) + 1];
+	int move = rndMove15[blankPos][UniformInt(n) + 1];
 
 	// build action = from,to
 	action[0] = blankPos;
@@ -156,7 +156,7 @@ void GenerateRandomAction2(int* action, int* situation)
 	while (move == lastBlankPos)
 	{
 		int n = rndMove15[blankPos][0];
-		move = rndMove15[blankPos][VRand(n) + 1];
+		move = rndMove15[blankPos][UniformInt(n) + 1];
 	}
 
 	// build action = from,to
@@ -243,6 +243,7 @@ void Randomize(int* situation, int n)
 		ComputeNewSituation(situation, action);
 	}
 }
+
 
 int main()
 {

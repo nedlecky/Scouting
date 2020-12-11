@@ -2,15 +2,30 @@
 // 12/12/2020
 
 #include <stdio.h>
-#include <string.h>
 #include <chrono>
+#include <random>
 
 using namespace std::chrono;
 
-int VRand(int max)
+std::random_device dev;
+std::mt19937 rng(dev());
+std::uniform_int_distribution<std::mt19937::result_type> dist0(0, 0); // distribution in range [0, 0]
+std::uniform_int_distribution<std::mt19937::result_type> dist1(1, 1); // distribution in range [0, 0]
+std::uniform_int_distribution<std::mt19937::result_type> dist2(1, 2); // distribution in range [1, 2]
+std::uniform_int_distribution<std::mt19937::result_type> dist3(1, 3); // distribution in range [1, 3]
+std::uniform_int_distribution<std::mt19937::result_type> dist4(1, 4); // distribution in range [1, 4]
+std::uniform_int_distribution<std::mt19937::result_type> dist[] = {
+	dist0,
+	dist1,
+	dist2,
+	dist3,
+	dist4
+};
+
+// Generate a uniform integer on the interval [1, max] 1 <= max <= 4
+int UniformInt(int max)
 {
-	int r = rand() % max;
-	return r;
+	return dist[max](rng);
 }
 
 // 15 Puzzle
@@ -104,9 +119,9 @@ uint8_t goal4[] = {
 	 0, 11,  9, 14,
 	12 };
 
-uint8_t* goalSituation = initialSituation4;  // test 1
+uint8_t* goalSituation = goal1;  // test 1
 
-// display a game situation 
+// Display a game situation 
 void ShowSituation(uint8_t* situation)
 {
 	printf("--------------\n");
@@ -143,7 +158,7 @@ void GenerateRandomAction(uint8_t* action, uint8_t* situation)
 	while (move == lastBlankPos)
 	{
 		uint8_t n = rndMove15[blankPos][0];
-		move = rndMove15[blankPos][VRand(n) + 1];
+		move = rndMove15[blankPos][UniformInt(n)];
 	}
 
 	// build action = from,to
@@ -168,7 +183,7 @@ uint8_t moveList[128];
 int Spinner(uint8_t* situation, uint8_t maxMoves)
 {
 	uint8_t action[2];
-	action[0] = 100;  // invalid initial action to be ignored for backtrack cancelation 
+	action[0] = 255;  // invalid initial action to be ignored for backtrack cancelation 
 
 	int nMoves = 0;
 
@@ -189,15 +204,13 @@ char bestMoveList[128];
 int winningIteration = 0;
 int SteppedCortex(uint8_t* situation, int maxIterations)
 {
-	int fastestSolution = 200;
+	int fastestSolution = 100;
 	bool fSolution = false;
 
-	for (int iteration  = 0; iteration < maxIterations; iteration++)
+	for (int iteration = 1; iteration <= maxIterations; iteration++)
 	{
 		uint8_t tSituation[17];
 		memcpy(tSituation, situation, 17 * sizeof(uint8_t));
-
-		//srand(i);
 
 		int nMoves = Spinner(tSituation, fastestSolution - 1);
 		if (nMoves >= 0)  // found a solution
@@ -218,7 +231,7 @@ int SteppedCortex(uint8_t* situation, int maxIterations)
 void Randomize(uint8_t* situation, int n)
 {
 	uint8_t action[2];
-	action[0] = 100;
+	action[0] = 255;
 
 	for (int i = 0; i < n; i++)
 	{
@@ -232,19 +245,18 @@ int main()
 	uint8_t InitSituation[17];
 	int fastestSolution = 100;
 
-	unsigned int seed = 1;
-	srand(seed);
-
 	for (int puzzle = 0; puzzle < 1; puzzle++)
 	{
-		memcpy(InitSituation, goalSituation, 17 * sizeof(uint8_t));
-		Randomize(InitSituation, 25);
-		//memcpy(InitSituation, initialSituation, 17 * sizeof(uint8_t));
+		//memcpy(InitSituation, goalSituation, 17 * sizeof(uint8_t));
+		//Randomize(InitSituation, 20);
+		memcpy(InitSituation, initialSituation, 17 * sizeof(uint8_t));
 		printf("15puzzle_uint8: InitSituation\n");
 		ShowSituation(InitSituation);
+		printf("goalSituation\n");
+		ShowSituation(goalSituation);
 
-		int maxReps = 10000000;
-		for (int trial = 0; trial < 1; trial++)
+		int maxReps = 100000000;
+		for (int trial = 1; trial <= 5; trial++)
 		{
 			printf("Starting trial %d  maxReps=%d...\n", trial, maxReps);
 			auto start = high_resolution_clock::now();
