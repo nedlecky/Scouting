@@ -198,7 +198,7 @@ int Spinner2(int* situation, int maxIterations, int level)
 }
 
 char bestSoln[1024];
-int iterCount = 0;
+int winningIteration = 0;
 int SteppedCortex(int* situation, int maxIterations, int level)
 {
 	int best = 100;
@@ -220,7 +220,7 @@ int SteppedCortex(int* situation, int maxIterations, int level)
 			//printf("found level %d solution i=%d d=%d\n",level,i,best);
 			memcpy(bestSituation, tSituation, 17 * sizeof(int));
 			if (level == 0) strcpy_s(bestSoln, soln);
-			iterCount = i;
+			winningIteration = i;
 			//ShowSituation(bestSituation);
 		}
 	}
@@ -270,7 +270,7 @@ int main()
 			int d = SteppedCortex(InitSituation, 100000, 0);
 			if (d >= 0)
 			{
-				printf("%d %d %d %s\n", p, d, iterCount, bestSoln);
+				printf("%d %d %d %s\n", p, d, winningIteration, bestSoln);
 			}
 		}
 	}

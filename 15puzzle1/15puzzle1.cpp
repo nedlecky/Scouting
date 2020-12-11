@@ -1,15 +1,11 @@
-// Spinner / Spinner2 Simulation
-// 15 Puzzle Toy Problem
-// 12/31/97 John E. Lecky
+// 15 Puzzle Experimentation
+// 12/12/2020
 
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
-#include <time.h>
-#include <conio.h>
+#include <chrono>
 
-#define TRUE -1
-#define FALSE 0
+using namespace std::chrono;
 
 int VRand(int max)
 {
@@ -53,33 +49,67 @@ int rndMove15[][5] = {
 
 // Some test puzzles
 int initialSituation1[] = {  // 20 rnds; vortex finds 18 soln
-	9,3,0,10,13,11,12,2,14,1,6,4,15,8,7,5,
+	9,3,0,10,
+	13,11,12,
+	2,14,1,6,
+	4,15,8,7,5,
 	2 };
 int initialSituation2[] = {  // 30 rnds; vortex can't find
-	9,12,1,3,11,10,7,2,13,4,0,5,14,15,8,6,
+	9,12,1,3,
+	11,10,7,2,
+	13,4,0,5,
+	14,15,8,6,
 	10 };
 int initialSituation3[] = {  // 1,000,001 rnds; vortex can't find
-	12,5,11,15,1,2,9,10,7,8,3,13,4,14,0,6,
+	12,5,11,15,
+	1,2,9,10,
+	7,8,3,13,
+	4,14,0,6,
 	14 };
 int initialSituation4[] = {  // Actual puzzle in my apartment
-	1,4,2,0,5,7,6,8,13,3,10,12,15,11,9,14,
+	1,4,2,0,
+	5,7,6,8,
+	13,3,10,12,
+	15,11,9,14,
 	3 };
 
+int* initialSituation = initialSituation1;
+
 // desired goal
-int goalSituation[] = {
-	// 12 11 10  9
-	// 13  1  2  3
-	// 14  8  0  4
-	// 15  7  6  5 with blank in pos 10
-	//12,11,10,9,13,1,2,3,14,8,0,4,15,7,6,5,
-	//10 };
-	0, 1, 4, 2, 5, 7, 6, 8, 13, 3, 10, 12, 15, 11, 9, 14,
-	0 };
+int goal1[] = {
+	 1,  2,  3,  4,
+	 5,  6,  7,  8,
+	 9, 10, 11, 12,
+	13, 14, 15,  0,
+	15 };
+
+int goal2[] = {
+	12, 11, 10,  9,
+	13,  1,  2,  3,
+	14,  8,  0,  4,
+	15,  7,  6,  5,
+	10 };
+
+int goal3[] = {
+	 0,  1, 4,  2,
+	 5,  7, 6,  8,
+	13,  3,10, 12,
+	15, 11, 9, 14,
+	 0 };
+
+int goal4[] = {
+	 5,  1,  4,  2,
+	13,  7,  6,  8,
+	15,  3, 10, 12,
+	 0, 11,  9, 14,
+	12 };
+
+int* goalSituation = goal1;
 
 // display a game situation 
 void ShowSituation(int* situation)
 {
-	printf("----------\n");
+	printf("--------------\n");
 	for (int i = 0; i < 4; i++)
 	{
 		char buf[28];
@@ -92,27 +122,13 @@ void ShowSituation(int* situation)
 		}
 		printf("|%s|\n", buf);
 	}
-	printf("---------%d\n", situation[16]);  // shows redundant blank pointer
+	printf("-------------%d\n", situation[16]);  // shows redundant blank pointer
 }
 
 // Is situation in the goal state?
-int GoalCheck(int* situation, int level)
+bool GoalCheck(int* situation)
 {
-	switch (level)
-	{
-	case 0:
-		return 0 == memcmp(situation, goalSituation, 2 * sizeof(int));
-	case 1:
-		return 0 == memcmp(situation, goalSituation, 4 * sizeof(int));
-	case 2:
-		return	(situation[0] == goalSituation[0] &&
-			situation[4] == goalSituation[4] &&
-			situation[8] == goalSituation[8] &&
-			situation[12] == goalSituation[12]);
-	case 3:
-		return 0 == memcmp(situation, goalSituation, 16 * sizeof(int));
-	default: return 0;
-	}
+	return 0 == memcmp(situation, goalSituation, 16 * sizeof(int));
 }
 
 // Given the current situation, pick a random action
@@ -130,7 +146,7 @@ void GenerateRandomAction(int* action, int* situation)
 
 // Given the current situation, pick a random action
 // AVOID GOING BACK TO UNDO PREVIOUS ACTION
-void GenerateRandomAction2(int* action, int* situation, int level)
+void GenerateRandomAction2(int* action, int* situation)
 {
 	int blankPos = situation[16];
 	int lastBlankPos = action[0];
@@ -141,24 +157,6 @@ void GenerateRandomAction2(int* action, int* situation, int level)
 	{
 		int n = rndMove15[blankPos][0];
 		move = rndMove15[blankPos][VRand(n) + 1];
-		if (level)
-		{
-			switch (level)
-			{
-			case 1:
-				if (move < 2)
-					move = lastBlankPos;
-				break;
-			case 2:
-				if (move < 4)
-					move = lastBlankPos;
-				break;
-			case 3:
-				if (move <= 4 || move == 8 || move == 12)
-					move = lastBlankPos;
-				break;
-			}
-		}
 	}
 
 	// build action = from,to
@@ -180,19 +178,19 @@ void ComputeNewSituation(int* situation, int* action)
 // Spinner2 Implementation
 // return depth of found solution or -1 if no solution found
 char soln[1024];
-int Spinner2(int* situation, int maxIterations, int level)
+int Spinner2(int* situation, int maxIterations)
 {
 	int action[2];
 	action[0] = -1;  // invalid initial action to be ignored
 
 	int iterations = 0;
 	soln[0] = 0;
-	while (!GoalCheck(situation, level) && iterations < maxIterations)
+	while (!GoalCheck(situation) && iterations < maxIterations)
 	{
-		GenerateRandomAction2(action, situation, level);
+		GenerateRandomAction2(action, situation);
 		ComputeNewSituation(situation, action);
 		char tbuf[32];
-		sprintf_s(tbuf, "%X", action[1]);
+		sprintf_s(tbuf, "%d ", situation[action[0]]);
 		strcat_s(soln, tbuf);
 		iterations++;
 	}
@@ -203,12 +201,12 @@ int Spinner2(int* situation, int maxIterations, int level)
 }
 
 char bestSoln[1024];
-int iterCount = 0;
-int SteppedCortex(int* situation, int maxIterations, int level)
+int winningIteration = 0;
+int SteppedCortex(int* situation, int maxIterations)
 {
 	int best = 100;
 	int bestSituation[17];
-	int fSolution = FALSE;
+	bool fSolution = false;
 
 	for (int i = 0; i < maxIterations; i++)
 	{
@@ -217,30 +215,20 @@ int SteppedCortex(int* situation, int maxIterations, int level)
 
 		//srand(i);
 
-		int d = Spinner2(tSituation, best - 1, level);
+		int d = Spinner2(tSituation, best - 1);
 		if (d >= 0)  // found a solution
 		{
-			fSolution = TRUE;
+			fSolution = true;
 			best = d;
-			printf("found level %d solution i=%d d=%d\n",level,i,best);
+			printf("found solution i=%d d=%d\n",i,best);
 			memcpy(bestSituation, tSituation, 17 * sizeof(int));
-			if (level == 0) strcpy_s(bestSoln, soln);
-			iterCount = i;
+			strcpy_s(bestSoln, soln);
+			winningIteration = i;
 			ShowSituation(bestSituation);
 		}
 	}
 
 	if (!fSolution) return -1;
-
-	if (0)//level<3)
-	{
-		int d = SteppedCortex(bestSituation, maxIterations, level + 1);
-		if (d >= 0)
-		{
-			return best + d;
-		}
-		else return -1;
-	}
 
 	return best;
 }
@@ -251,7 +239,7 @@ void Randomize(int* situation, int n)
 
 	for (int i = 0; i < n; i++)
 	{
-		GenerateRandomAction2(action, situation, 0);
+		GenerateRandomAction2(action, situation);
 		ComputeNewSituation(situation, action);
 	}
 }
@@ -266,21 +254,23 @@ int main()
 
 	for (int p = 0; p < 1; p++)
 	{
-		//memcpy(InitSituation, goalSituation, 17 * sizeof(int));
-		//Randomize(InitSituation, 1000001);
-		//ShowSituation(InitSituation);
-		memcpy(InitSituation, initialSituation4, 17 * sizeof(int));
-		printf("InitSituation\n");
+		memcpy(InitSituation, goalSituation, 17 * sizeof(int));
+		Randomize(InitSituation, 35);
+		//memcpy(InitSituation, initialSituation, 17 * sizeof(int));
+		printf("15puzzle1_int: InitSituation\n");
 		ShowSituation(InitSituation);
-		//return 1;
 
-		for (int i = 0; i < 1; i++)
+		int maxReps = 1000000;
+		for (int trial = 0; trial < 1; trial++)
 		{
-			int d = SteppedCortex(InitSituation, 100000, 0);
-			if (d >= 0)
-			{
-				printf("%d %d %d %s\n", p, d, iterCount, bestSoln);
-			}
+			printf("Starting trial %d  maxReps=%d...\n", trial, maxReps);
+			auto start = high_resolution_clock::now();
+			int d = SteppedCortex(InitSituation, maxReps);
+			auto stop = high_resolution_clock::now();
+			auto duration = duration_cast<milliseconds>(stop - start);
+
+			if (d < 0) printf("NO SOLUTION ");
+			printf("%dmS p=%d i=%d d=%d %s\n", duration, p, winningIteration, d, bestSoln);
 		}
 	}
 
