@@ -91,11 +91,18 @@ uint8_t initialSituation4[] = {  // Actual puzzle in my apartment
 uint8_t* initialSituation = initialSituation4;  // test 1
 
 // desired goal
-uint8_t goal1[] = {
+uint8_t goal1A[] = {
 	 1,  2,  3,  4,
 	 5,  6,  7,  8,
 	 9, 10, 11, 12,
 	13, 14, 15,  0,
+	15 };
+
+uint8_t goal1B[] = {
+	 1,  2,  3,  4,
+	 5,  6,  7,  8,
+	 9, 10, 11, 12,
+	14, 13, 15,  0,
 	15 };
 
 uint8_t goal2[] = {
@@ -119,7 +126,7 @@ uint8_t goal4[] = {
 	 0, 11,  9, 14,
 	12 };
 
-uint8_t* goalSituation = goal1;  // test 1
+uint8_t* goalSituation = goal1A;  // test 1
 
 // Display a game situation 
 void ShowSituation(uint8_t* situation)
@@ -247,18 +254,23 @@ int main()
 
 	for (int puzzle = 0; puzzle < 1; puzzle++)
 	{
-		//memcpy(InitSituation, goalSituation, 17 * sizeof(uint8_t));
-		//Randomize(InitSituation, 20);
+		//memcpy(InitSituation, goal1B, 17 * sizeof(uint8_t));
+		//Randomize(InitSituation, 10);
 		memcpy(InitSituation, initialSituation, 17 * sizeof(uint8_t));
 		printf("15puzzle_uint8: InitSituation\n");
 		ShowSituation(InitSituation);
-		printf("goalSituation\n");
-		ShowSituation(goalSituation);
 
 		int maxReps = 100000000;
-		for (int trial = 1; trial <= 5; trial++)
+		for (int trial = 1; trial <= 20; trial++)
 		{
 			printf("Starting trial %d  maxReps=%d...\n", trial, maxReps);
+			if (goalSituation == goal1A)
+				goalSituation = goal1B;
+			else
+				goalSituation = goal1A;
+			printf("goalSituation\n");
+			ShowSituation(goalSituation);
+
 			auto start = high_resolution_clock::now();
 			int fastestSolution = SteppedCortex(InitSituation, maxReps);
 			auto stop = high_resolution_clock::now();
@@ -266,7 +278,7 @@ int main()
 
 			if (fastestSolution < 0) printf("NO SOLUTION ");
 			printf("puzzle=%d %dmS winningIteration=%d fastestSolution=%d moves=", puzzle, duration, winningIteration, fastestSolution);
-			for (int i = 0; i < fastestSolution; i++) printf("%d ",bestMoveList[i]);
+			for (int i = 0; i < fastestSolution; i++) printf("%d ", bestMoveList[i]);
 			printf("\n");
 		}
 	}
