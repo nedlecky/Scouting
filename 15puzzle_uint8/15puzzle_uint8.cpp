@@ -184,6 +184,45 @@ void ComputeNewSituation(uint8_t* situation, uint8_t* action)
 	situation[16] = to;				// update redundant position
 }
 
+// Make n random moves in a puzzle
+void RandomizePuzzle(uint8_t* situation, int n)
+{
+	uint8_t action[2];
+	action[0] = 255;
+
+	for (int i = 0; i < n; i++)
+	{
+		GenerateRandomAction(action, situation);
+		ComputeNewSituation(situation, action);
+	}
+}
+
+// AverageBranching
+// Computes average branching for puzzle given that we will reject direct backtracks of last move
+double AverageBranching(uint8_t* situation, int n)
+{
+	uint8_t action[2];
+	action[0] = 255;
+
+	uint8_t s[17];
+	memcpy(s, situation, 17 * sizeof(uint8_t));
+	uint64_t branchSum = 0;
+
+	for (int i = 0; i < n; i++)
+	{
+		uint8_t blankPos = s[16];
+		uint8_t nBranch = rndMove15[blankPos][0] - 1;
+		branchSum += nBranch;
+		printf("%d ", nBranch);
+
+		GenerateRandomAction(action, s);
+		ComputeNewSituation(s, action);
+	}
+	printf("\n");
+
+	return (double)branchSum / (double)n;
+}
+
 // Spinner Implementation
 // return number of moves in found solution or -1 if no solution found
 uint8_t moveList[128];
@@ -235,17 +274,61 @@ int SteppedCortex(uint8_t* situation, int maxIterations)
 	return fastestSolution;
 }
 
-void Randomize(uint8_t* situation, int n)
+unsigned __int64 nDfsEntries = 0;
+int DFS(uint8_t* situation, uint8_t* lastAction, int maxDepth, int myDepth = 0)
 {
-	uint8_t action[2];
-	action[0] = 255;
+	nDfsEntries++;
 
-	for (int i = 0; i < n; i++)
+	if (GoalCheck(situation))
 	{
-		GenerateRandomAction(action, situation);
-		ComputeNewSituation(situation, action);
+		printf("myDepth=%d passed in solution  maxDepth=%d moves=", maxDepth, myDepth);
+		for (int i = 0; i < myDepth; i++)
+			printf("%d ", moveList[i]);
+		printf("\n");
+		return myDepth;
 	}
+
+	if (maxDepth < 1)
+		return -1;
+
+	uint8_t action[2];
+
+	uint8_t blankPos = situation[16];
+	uint8_t nMoves = rndMove15[blankPos][0];
+
+	for (int moveID = 1; moveID <= nMoves; moveID++)
+	{
+		uint8_t move = rndMove15[blankPos][moveID];
+		if (move == lastAction[0]) continue;
+
+		action[0] = blankPos;
+		action[1] = move;
+
+		uint8_t tSituation[17];
+		memcpy(tSituation, situation, 17 * sizeof(uint8_t));
+		uint8_t tLastAction[2];
+		memcpy(tLastAction, action, 2 * sizeof(uint8_t));
+
+		moveList[myDepth] = situation[action[1]];
+		ComputeNewSituation(tSituation, action);
+		//printf("DFS: %d move: %d\n", myDepth, moveID);
+
+		int foundDepth = DFS(tSituation, tLastAction, maxDepth - 1, myDepth + 1);
+		if (foundDepth >= 0)
+		{
+			printf(" DFS%d returned solution foundDepth=%d\n", myDepth, foundDepth);
+			//return foundDepth;
+		}
+	}
+	return -1;
 }
+
+
+// What we've learned
+// Average solution branching is 2.168 
+// Theoretical would by 3 - 1 (since we forbid direct undo of last move)
+// Experimental > 2 since in actual play corners seem harder to get into!
+// Complexity thus O(n^2) with DFS getting cumbersome by d=30
 
 int main()
 {
@@ -254,32 +337,45 @@ int main()
 
 	for (int puzzle = 0; puzzle < 1; puzzle++)
 	{
-		//memcpy(InitSituation, goal1B, 17 * sizeof(uint8_t));
-		//Randomize(InitSituation, 10);
-		memcpy(InitSituation, initialSituation, 17 * sizeof(uint8_t));
-		printf("15puzzle_uint8: InitSituation\n");
+		int nRandomize = 5;
+		memcpy(InitSituation, goal1A, 17 * sizeof(uint8_t));
+		RandomizePuzzle(InitSituation, nRandomize);
+		//memcpy(InitSituation, initialSituation, 17 * sizeof(uint8_t));
+		printf("15puzzle_uint8: InitSituation (%d random moves)\n", nRandomize);
 		ShowSituation(InitSituation);
+		int branchAverage = 100000;
+		printf("Average branching(%d)=%.3lf\n", branchAverage, AverageBranching(InitSituation, branchAverage));
+		printf("goalSituation\n");
+		ShowSituation(goalSituation);
 
-		int maxReps = 100000000;
-		for (int trial = 1; trial <= 20; trial++)
+		int maxReps = 1000000;
+		for (int trial = 1; trial <= 1; trial++)
 		{
-			printf("Starting trial %d  maxReps=%d...\n", trial, maxReps);
-			if (goalSituation == goal1A)
-				goalSituation = goal1B;
-			else
-				goalSituation = goal1A;
-			printf("goalSituation\n");
-			ShowSituation(goalSituation);
-
-			auto start = high_resolution_clock::now();
-			int fastestSolution = SteppedCortex(InitSituation, maxReps);
-			auto stop = high_resolution_clock::now();
-			auto duration = duration_cast<milliseconds>(stop - start);
-
-			if (fastestSolution < 0) printf("NO SOLUTION ");
-			printf("puzzle=%d %dmS winningIteration=%d fastestSolution=%d moves=", puzzle, duration, winningIteration, fastestSolution);
-			for (int i = 0; i < fastestSolution; i++) printf("%d ", bestMoveList[i]);
+			printf("Starting Scout trial %d  maxReps=%d...\n", trial, maxReps);
+			auto start1 = high_resolution_clock::now();
+			int fastestScoutSolution = 0;// SteppedCortex(InitSituation, maxReps);
+			auto stop1 = high_resolution_clock::now();
+			auto duration1 = duration_cast<milliseconds>(stop1 - start1);
+			printf("puzzle=%d %llumS winningIteration=%d fastestSolution=%d moves=", puzzle, duration1.count(), winningIteration, fastestScoutSolution);
+			for (int i = 0; i < fastestScoutSolution; i++) printf("%d ", bestMoveList[i]);
 			printf("\n");
+
+			uint8_t lastAction[2];
+			lastAction[0] = 255;
+			lastAction[1] = 0;
+			nDfsEntries = 0;
+			printf("Starting DFS trial %d...\n", trial);
+			auto start2 = high_resolution_clock::now();
+			int fastestDfsSolution = DFS(InitSituation, lastAction, nRandomize);
+			auto stop2 = high_resolution_clock::now();
+			auto duration2 = duration_cast<milliseconds>(stop2 - start2);
+			if (fastestDfsSolution < 0) printf("NO SOLUTION ");
+			printf("nDFSentries=%llu ", nDfsEntries);
+			printf("puzzle=%d %llumS fastestDfsSolution=%d moves=", puzzle, duration2.count(), fastestDfsSolution);
+			for (int i = 0; i < fastestDfsSolution; i++) printf("%d ", bestMoveList[i]);
+			printf("\n");
+
+			ShowSituation(InitSituation);
 		}
 	}
 

@@ -271,7 +271,7 @@ int main()
 			auto duration = duration_cast<milliseconds>(stop - start);
 
 			if (d < 0) printf("NO SOLUTION ");
-			printf("%dmS p=%d i=%d d=%d %s\n", duration, p, winningIteration, d, bestSoln);
+			printf("%llumS p=%d i=%d d=%d %s\n", duration.count(), p, winningIteration, d, bestSoln);
 		}
 	}
 

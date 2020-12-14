@@ -19,4 +19,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="DFS Growth.xlsx">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

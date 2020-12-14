@@ -141,6 +141,9 @@
   <ItemGroup>
     <ClCompile Include="15puzzle_uint8.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="DFS Growth.xlsx" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

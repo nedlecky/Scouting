@@ -194,7 +194,7 @@ int Cortex(uint8_t* situation, int maxIterations)
 	else return -1;
 }
 
-void Randomize(uint8_t* situation, int n)
+void RandomizePuzzle(uint8_t* situation, int n)
 {
 	uint8_t action[2];
 	action[0] = -1;
@@ -226,7 +226,7 @@ int main()
 		uint8_t situation[10];
 		memcpy(situation, goalSituation, 10 * sizeof(uint8_t));
 		int knownSolution = 30;
-		Randomize(situation, knownSolution);
+		RandomizePuzzle(situation, knownSolution);
 		//memcpy(situation,pathPuzzles[p],10*sizeof(uint8_t));
 		ShowSituation(situation);
 
