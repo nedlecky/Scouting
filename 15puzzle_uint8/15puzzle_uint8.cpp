@@ -213,12 +213,12 @@ double AverageBranching(uint8_t* situation, int n)
 		uint8_t blankPos = s[16];
 		uint8_t nBranch = rndMove15[blankPos][0] - 1;
 		branchSum += nBranch;
-		printf("%d ", nBranch);
+		//printf("%d ", nBranch);
 
 		GenerateRandomAction(action, s);
 		ComputeNewSituation(s, action);
 	}
-	printf("\n");
+	//printf("\n");
 
 	return (double)branchSum / (double)n;
 }
@@ -296,6 +296,7 @@ int DFS(uint8_t* situation, uint8_t* lastAction, int maxDepth, int myDepth = 0)
 	uint8_t blankPos = situation[16];
 	uint8_t nMoves = rndMove15[blankPos][0];
 
+	int bestDepth = -1;
 	for (int moveID = 1; moveID <= nMoves; moveID++)
 	{
 		uint8_t move = rndMove15[blankPos][moveID];
@@ -316,11 +317,20 @@ int DFS(uint8_t* situation, uint8_t* lastAction, int maxDepth, int myDepth = 0)
 		int foundDepth = DFS(tSituation, tLastAction, maxDepth - 1, myDepth + 1);
 		if (foundDepth >= 0)
 		{
-			printf(" DFS%d returned solution foundDepth=%d\n", myDepth, foundDepth);
-			//return foundDepth;
+			if (bestDepth == -1)
+			{
+				bestDepth = foundDepth;
+				printf("FIRST BEST: ");
+			}
+			else if (foundDepth < bestDepth)
+			{
+				bestDepth = foundDepth;
+				printf("NEW BEST: ");
+			}
+			printf("DFS%d returned solution foundDepth=%d\n", myDepth, foundDepth);
 		}
 	}
-	return -1;
+	return bestDepth;
 }
 
 
@@ -337,7 +347,7 @@ int main()
 
 	for (int puzzle = 0; puzzle < 1; puzzle++)
 	{
-		int nRandomize = 5;
+		int nRandomize = 20;
 		memcpy(InitSituation, goal1A, 17 * sizeof(uint8_t));
 		RandomizePuzzle(InitSituation, nRandomize);
 		//memcpy(InitSituation, initialSituation, 17 * sizeof(uint8_t));
@@ -353,7 +363,7 @@ int main()
 		{
 			printf("Starting Scout trial %d  maxReps=%d...\n", trial, maxReps);
 			auto start1 = high_resolution_clock::now();
-			int fastestScoutSolution = 0;// SteppedCortex(InitSituation, maxReps);
+			int fastestScoutSolution = SteppedCortex(InitSituation, maxReps);
 			auto stop1 = high_resolution_clock::now();
 			auto duration1 = duration_cast<milliseconds>(stop1 - start1);
 			printf("puzzle=%d %llumS winningIteration=%d fastestSolution=%d moves=", puzzle, duration1.count(), winningIteration, fastestScoutSolution);

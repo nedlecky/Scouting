@@ -1,0 +1,13 @@
+ToDo
+12/15/2020
+
+
+DFS reduce depth once solution found... only look for better solutions!
+
+Add UCS feature to DFS keep list of puzzles visited... and do not explore below
+
+C# Interface
+
+Move DFS and Scout (rename) into sub files
+
+Refactor for MxN puzzle not just 4x4
