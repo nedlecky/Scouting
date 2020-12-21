@@ -10,7 +10,7 @@ using namespace std::chrono;
 std::random_device dev;
 std::mt19937 rng(dev());
 std::uniform_int_distribution<std::mt19937::result_type> dist0(0, 0); // distribution in range [0, 0]
-std::uniform_int_distribution<std::mt19937::result_type> dist1(1, 1); // distribution in range [0, 0]
+std::uniform_int_distribution<std::mt19937::result_type> dist1(1, 1); // distribution in range [1, 1]
 std::uniform_int_distribution<std::mt19937::result_type> dist2(1, 2); // distribution in range [1, 2]
 std::uniform_int_distribution<std::mt19937::result_type> dist3(1, 3); // distribution in range [1, 3]
 std::uniform_int_distribution<std::mt19937::result_type> dist4(1, 4); // distribution in range [1, 4]
