@@ -61,11 +61,20 @@ uint8_t pathPuzzle2[] = {
 uint8_t pathPuzzle3[] = {
 	2,5,7,3,4,1,8,0,6,
 	7 };
+uint8_t pathPuzzle4[] = { // This is the #1 worst-case 31-move puzzle requiring 31 moves
+	8,6,7,2,5,4,3,0,1,
+	7 };
+uint8_t pathPuzzle5[] = { // This is the #2 worst-case 31-move puzzle requiring 31 moves
+	6,4,7,8,5,0,3,2,1,
+	5 };
+
 
 uint8_t* pathPuzzles[] = {
 	pathPuzzle1,
 	pathPuzzle2,
-	pathPuzzle3
+	pathPuzzle3,
+	pathPuzzle4,
+	pathPuzzle5
 };
 
 
@@ -74,8 +83,10 @@ uint8_t goalSituation[] = {
 	// 1 2 3
 	// 8 0 4
 	// 7 6 5  with blank in pos 4
-	1,2,3,8,0,4,7,6,5,
-	4 };
+	1, 2, 3, 4, 5, 6, 7, 8, 0,
+	8 };
+	//1, 2, 3, 8, 0, 4, 7, 6, 5,
+	//4 };
 
 // display a game situation 
 void ShowSituation(uint8_t* situation)
@@ -177,7 +188,7 @@ int bestIter;
 char bestSoln[maxSolnLen + 1];
 int Cortex(uint8_t* situation, int maxIterations)
 {
-	int best = 30;
+	int best = 40;
 
 	for (int i = 0; i < maxIterations; i++)
 	{
@@ -208,32 +219,35 @@ void RandomizePuzzle(uint8_t* situation, int n)
 
 int main()
 {
-	const int N = 8;
-	int count[N + 1];
-	memset(&count, 0, (N+1)*sizeof(int));
-	for (int i = 0; i < N*100; i++)
-		count[RANDOM(N)]++;
-	for (int i = 1; i <= N;  i++)
-		printf("Count[%d]=%d\n", i, count[i]);
-	char c=_getch();
-	//return 1;
+	/*
+	for (int i = 0; i < 4; i++)
+	{
+		const int N = 8;
+		int count[N + 1];
+		memset(&count, 0, (N + 1) * sizeof(int));
+		for (int i = 0; i < N * 10000; i++)
+			count[RANDOM(N)]++;
+		for (int i = 1; i <= N; i++)
+			printf("Count[%d]=%d\n", i, count[i]);
+	}
+	*/
 
 	clock_t start = std::clock();
 
 	int nTotalFails = 0;
-	for (int p = 0; p < 10; p++)
+	for (int p = 3; p < 5; p++)
 	{
 		uint8_t situation[10];
 		memcpy(situation, goalSituation, 10 * sizeof(uint8_t));
-		int knownSolution = 30;
-		RandomizePuzzle(situation, knownSolution);
-		//memcpy(situation,pathPuzzles[p],10*sizeof(uint8_t));
+		int knownSolution = 31;
+		//RandomizePuzzle(situation, knownSolution);
+		memcpy(situation,pathPuzzles[p],10*sizeof(uint8_t));
 		ShowSituation(situation);
 
 		int nFails = 0;
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 2; i++)
 		{
-			int d = Cortex(situation, 100000);
+			int d = Cortex(situation, 1000000);
 			printf("%d %d %d %s", p, d, bestIter, bestSoln);
 			if (d > knownSolution)
 			{
@@ -250,7 +264,7 @@ int main()
 	printf("\nTotalFails=%d\nExecution Time = %.3f S\n", nTotalFails, (end - start) / 1000.0);
 
 	printf("press any key....");
-	c=_getch();
+	char c=_getch();
 	return 0;
 }
 
