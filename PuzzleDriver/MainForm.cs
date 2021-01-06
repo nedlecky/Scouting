@@ -61,7 +61,11 @@ namespace PuzzleDriver
 			if (label != "")
 				tileNum = Int32.Parse(label);
 			Console.WriteLine("Button({0})", tileNum.ToString());
-			tilePuzzle.MoveTile(tileNum);
+			bool fMoved = tilePuzzle.MoveTile(tileNum);
+			if(fMoved)
+			{
+				tilePuzzle.LoadButtonsFromArray(tileButtonList);
+			}
 		}
 
 		private void ClearTiles()
