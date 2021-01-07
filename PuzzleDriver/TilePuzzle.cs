@@ -38,7 +38,7 @@ namespace PuzzleDriver
 					if (label != "")
 						key = Int32.Parse(label);
 					tiles[row, col] = key;
-					Console.WriteLine("tiles[{0},{1}]={2}", row, col, key);
+					//Console.WriteLine("tiles[{0},{1}]={2}", row, col, key);
 				}
 			LoadButtonsFromArray(tileButtonList);
 			return true;
@@ -56,7 +56,7 @@ namespace PuzzleDriver
 				for (int col = 0; col < nCols; col++)
 				{
 					tileButtonList[idx++].Text = tiles[row, col] == 0 ? "" : tiles[row, col].ToString();
-					Console.WriteLine("button[{0}]={1}", idx - 1, tileButtonList[idx - 1].Text);
+					//Console.WriteLine("button[{0}]={1}", idx - 1, tileButtonList[idx - 1].Text);
 				}
 
 			return true;
@@ -67,7 +67,7 @@ namespace PuzzleDriver
 				for (int col = 0; col < nCols; col++)
 					if (tiles[row, col] == tileNum)
 					{
-						Console.WriteLine("FindTile({0}) returns [{1}, {2}]", tileNum, row, col);
+						//Console.WriteLine("FindTile({0}) returns [{1}, {2}]", tileNum, row, col);
 						return (row, col);
 					}
 
@@ -94,6 +94,57 @@ namespace PuzzleDriver
 
 			tiles[thisTile.row, thisTile.col] = 0;
 			tiles[blankTile.row, blankTile.col] = tileNum;
+			return true;
+		}
+
+		static Random MakeRandomMove_random = new Random();
+		public bool MakeRandomMove(int nMoves = 1)
+		{
+
+			int[] moveRow = new int[4];
+			int[] moveCol = new int[4];
+
+			for (int i = 0; i < nMoves; i++)
+			{
+				// Find the blank
+				var blankTile = FindTile(0);
+
+				// Tally up possible moves
+				int nPossibleMoves = 0;
+
+				// Can we move left?
+				if (blankTile.col > 0)
+				{
+					moveRow[nPossibleMoves] = blankTile.row;
+					moveCol[nPossibleMoves++] = blankTile.col - 1;
+				}
+				// Can we move right?
+				if (blankTile.col < nCols - 1)
+				{
+					moveRow[nPossibleMoves] = blankTile.row;
+					moveCol[nPossibleMoves++] = blankTile.col + 1;
+				}
+				// Can we move up?
+				if (blankTile.row > 0)
+				{
+					moveRow[nPossibleMoves] = blankTile.row - 1;
+					moveCol[nPossibleMoves++] = blankTile.col;
+				}
+				// Can we move down?
+				if (blankTile.row < nRows - 1)
+				{
+					moveRow[nPossibleMoves] = blankTile.row + 1;
+					moveCol[nPossibleMoves++] = blankTile.col;
+				}
+				//Console.WriteLine("MakeRandomMove can make {0} moves", nPossibleMoves);
+
+				// Now pick one
+				int idx = MakeRandomMove_random.Next(0, nPossibleMoves);
+
+				// Swap!
+				tiles[blankTile.row, blankTile.col] = tiles[moveRow[idx], moveCol[idx]];
+				tiles[moveRow[idx], moveCol[idx]] = 0;
+			}
 			return true;
 		}
 	}

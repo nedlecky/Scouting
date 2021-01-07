@@ -31,8 +31,8 @@ namespace PuzzleDriver
 		private void CreateButtons(int nRows, int nCols)
 		{
 			int tileSize = 40;
-			int startX = 120;
-			int startY = 50;
+			int startX = 220;
+			int startY = 10;
 
 			int tileID = 1;
 			for (int row = 0; row < nRows; row++)
@@ -85,6 +85,15 @@ namespace PuzzleDriver
 		private void ClearBtn_Click(object sender, EventArgs e)
 		{
 			ClearTiles();
+		}
+
+		private void RandomMoveBtn_Click(object sender, EventArgs e)
+		{
+			int n = 1;
+
+			n = Int32.Parse(NumRandomMovesTxt.Text);
+			tilePuzzle.MakeRandomMove(n);
+			tilePuzzle.LoadButtonsFromArray(tileButtonList);
 		}
 	}
 }

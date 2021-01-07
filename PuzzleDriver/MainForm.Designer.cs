@@ -33,13 +33,15 @@ namespace PuzzleDriver
 			this.ClearBtn = new System.Windows.Forms.Button();
 			this.RowCountCombo = new System.Windows.Forms.ComboBox();
 			this.ColCountCombo = new System.Windows.Forms.ComboBox();
+			this.RandomMoveBtn = new System.Windows.Forms.Button();
+			this.NumRandomMovesTxt = new System.Windows.Forms.TextBox();
 			this.SuspendLayout();
 			// 
 			// SetupBtn
 			// 
 			this.SetupBtn.Location = new System.Drawing.Point(12, 12);
 			this.SetupBtn.Name = "SetupBtn";
-			this.SetupBtn.Size = new System.Drawing.Size(98, 46);
+			this.SetupBtn.Size = new System.Drawing.Size(98, 21);
 			this.SetupBtn.TabIndex = 0;
 			this.SetupBtn.Text = "Setup";
 			this.SetupBtn.UseVisualStyleBackColor = true;
@@ -47,9 +49,9 @@ namespace PuzzleDriver
 			// 
 			// ClearBtn
 			// 
-			this.ClearBtn.Location = new System.Drawing.Point(12, 64);
+			this.ClearBtn.Location = new System.Drawing.Point(12, 39);
 			this.ClearBtn.Name = "ClearBtn";
-			this.ClearBtn.Size = new System.Drawing.Size(98, 46);
+			this.ClearBtn.Size = new System.Drawing.Size(98, 21);
 			this.ClearBtn.TabIndex = 1;
 			this.ClearBtn.Text = "Clear";
 			this.ClearBtn.UseVisualStyleBackColor = true;
@@ -67,9 +69,9 @@ namespace PuzzleDriver
             "6",
             "7",
             "8"});
-			this.RowCountCombo.Location = new System.Drawing.Point(131, 26);
+			this.RowCountCombo.Location = new System.Drawing.Point(116, 12);
 			this.RowCountCombo.Name = "RowCountCombo";
-			this.RowCountCombo.Size = new System.Drawing.Size(70, 21);
+			this.RowCountCombo.Size = new System.Drawing.Size(35, 21);
 			this.RowCountCombo.TabIndex = 2;
 			// 
 			// ColCountCombo
@@ -84,16 +86,36 @@ namespace PuzzleDriver
             "6",
             "7",
             "8"});
-			this.ColCountCombo.Location = new System.Drawing.Point(207, 26);
+			this.ColCountCombo.Location = new System.Drawing.Point(157, 13);
 			this.ColCountCombo.Name = "ColCountCombo";
-			this.ColCountCombo.Size = new System.Drawing.Size(70, 21);
+			this.ColCountCombo.Size = new System.Drawing.Size(33, 21);
 			this.ColCountCombo.TabIndex = 3;
+			// 
+			// RandomMoveBtn
+			// 
+			this.RandomMoveBtn.Location = new System.Drawing.Point(12, 84);
+			this.RandomMoveBtn.Name = "RandomMoveBtn";
+			this.RandomMoveBtn.Size = new System.Drawing.Size(98, 46);
+			this.RandomMoveBtn.TabIndex = 4;
+			this.RandomMoveBtn.Text = "Make N Random Moves";
+			this.RandomMoveBtn.UseVisualStyleBackColor = true;
+			this.RandomMoveBtn.Click += new System.EventHandler(this.RandomMoveBtn_Click);
+			// 
+			// NumRandomMovesTxt
+			// 
+			this.NumRandomMovesTxt.Location = new System.Drawing.Point(12, 136);
+			this.NumRandomMovesTxt.Name = "NumRandomMovesTxt";
+			this.NumRandomMovesTxt.Size = new System.Drawing.Size(98, 20);
+			this.NumRandomMovesTxt.TabIndex = 5;
+			this.NumRandomMovesTxt.Text = "1000000";
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(800, 450);
+			this.ClientSize = new System.Drawing.Size(573, 348);
+			this.Controls.Add(this.NumRandomMovesTxt);
+			this.Controls.Add(this.RandomMoveBtn);
 			this.Controls.Add(this.ColCountCombo);
 			this.Controls.Add(this.RowCountCombo);
 			this.Controls.Add(this.ClearBtn);
@@ -103,6 +125,7 @@ namespace PuzzleDriver
 			this.Text = "Form1";
 			this.Load += new System.EventHandler(this.Form1_Load);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -112,6 +135,8 @@ namespace PuzzleDriver
 		private System.Windows.Forms.Button ClearBtn;
 		private System.Windows.Forms.ComboBox RowCountCombo;
 		private System.Windows.Forms.ComboBox ColCountCombo;
+		private System.Windows.Forms.Button RandomMoveBtn;
+		private System.Windows.Forms.TextBox NumRandomMovesTxt;
 	}
 }
 
