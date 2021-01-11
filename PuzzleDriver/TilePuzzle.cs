@@ -9,23 +9,26 @@ namespace PuzzleDriver
 {
 	class TilePuzzle
 	{
+		MainForm mainForm;
 		int nRows, nCols;
 		int[,] tiles;
 
-		public TilePuzzle(int _nRows, int _nCols, List<Button> tileButtonList)
+		public TilePuzzle(MainForm _mainForm, int _nRows, int _nCols, List<Button> tileButtonList)
 		{
+			mainForm = _mainForm;
 			nRows = _nRows;
 			nCols = _nCols;
-			Console.WriteLine("TilePuzzle({0}, {1})", nRows, nCols);
+			mainForm.Log("TilePuzzle({0}, {1})", nRows, nCols);
 			tiles = new int[nRows, nCols];
 
 			LoadArrayFromButtons(tileButtonList);
 		}
 		public bool LoadArrayFromButtons(List<Button> tileButtonList)
 		{
+			mainForm.Log("LoadArrayFromButtons(...)");
 			if (tileButtonList.Count != nRows * nCols)
 			{
-				Console.WriteLine("LoadArrayFromButtons: ListLength <> nRows*nCols");
+				mainForm.Log("LoadArrayFromButtons: ListLength <> nRows*nCols");
 				return false;
 			}
 
@@ -45,9 +48,10 @@ namespace PuzzleDriver
 		}
 		public bool LoadButtonsFromArray(List<Button> tileButtonList)
 		{
+			mainForm.Log("LoadButtonsFromArray(...)");
 			if (tileButtonList.Count != nRows * nCols)
 			{
-				Console.WriteLine("LoadButtonsFromArray: ListLength <> nRows*nCols");
+				mainForm.Log("LoadButtonsFromArray: ListLength <> nRows*nCols");
 				return false;
 			}
 
@@ -71,12 +75,12 @@ namespace PuzzleDriver
 						return (row, col);
 					}
 
-			Console.WriteLine("FindTile({0}) FAILED", tileNum);
+			mainForm.Log("FindTile({0}) FAILED", tileNum);
 			return (-1, -1);
 		}
 		public bool MoveTile(int tileNum)
 		{
-			Console.WriteLine("MoveTile({0})", tileNum);
+			mainForm.Log("MoveTile({0})", tileNum);
 
 			// Find the tile of record and the blank
 			var blankTile = FindTile(0);
@@ -84,11 +88,11 @@ namespace PuzzleDriver
 
 			// Must be adjacent by 1 to be swappable
 			int distance = Math.Abs(blankTile.row - thisTile.row) + Math.Abs(blankTile.col - thisTile.col);
-			Console.WriteLine("distance={0}", distance);
+			mainForm.Log("distance={0}", distance);
 
 			if (distance != 1)
 			{
-				Console.WriteLine("Can't move tile {0}", tileNum);
+				mainForm.Log("Can't move tile {0}", tileNum);
 				return (false);
 			}
 
@@ -100,7 +104,7 @@ namespace PuzzleDriver
 		static Random MakeRandomMove_random = new Random();
 		public bool MakeRandomMove(int nMoves = 1)
 		{
-
+			mainForm.Log("MakeRandomMove({0})", nMoves);
 			int[] moveRow = new int[4];
 			int[] moveCol = new int[4];
 

@@ -16,14 +16,48 @@ namespace PuzzleDriver
 		{
 			InitializeComponent();
 		}
+		protected override void OnFormClosing(FormClosingEventArgs e)
+		{
+			if (e.CloseReason == CloseReason.UserClosing)
+			{
+				if (MessageBox.Show("Do you want to close the application?",
+									"TilePuzzle Operation Confirmation",
+									MessageBoxButtons.YesNo,
+									MessageBoxIcon.Question) == DialogResult.No)
+				{
+					e.Cancel = true;
+				}
+			}
+			if (e.Cancel == false)
+				StopEnvironment();
 
-		private void Form1_Load(object sender, EventArgs e)
+			base.OnFormClosing(e);
+		}
+		private void ExitBtn_Click_1(object sender, EventArgs e)
+		{
+			this.Close();
+		}
+
+		private void MainForm_Load(object sender, EventArgs e)
 		{
 			Text = "PuzzleDriver 1.0";
 
 			RowCountCombo.SelectedItem = "4";
 			ColCountCombo.SelectedItem = "4";
+			StartEnvironment();
 			SetupBtn_Click(null, null);
+		}
+
+		private void StartEnvironment()
+		{
+			Log("StartEnvironment()");
+			HeartbeatTmr.Interval = 1000;
+			HeartbeatTmr.Enabled = true;
+		}
+		private void StopEnvironment()
+		{
+			Log("StopEnvironment()");
+			HeartbeatTmr.Enabled = false;
 		}
 
 		TilePuzzle tilePuzzle;
@@ -51,7 +85,7 @@ namespace PuzzleDriver
 				}
 			// Last tile gets the blank
 			tileButtonList[tileButtonList.Count-1].Text = "";
-			tilePuzzle = new TilePuzzle(nRows, nCols, tileButtonList);
+			tilePuzzle = new TilePuzzle(this, nRows, nCols, tileButtonList);
 		}
 
 		private void ButtonHandler(object sender, EventArgs e)
@@ -60,7 +94,7 @@ namespace PuzzleDriver
 			string label = ((Button)sender).Text;
 			if (label != "")
 				tileNum = Int32.Parse(label);
-			Console.WriteLine("Button({0})", tileNum.ToString());
+			Log("Button({0})", tileNum.ToString());
 			bool fMoved = tilePuzzle.MoveTile(tileNum);
 			if(fMoved)
 			{
@@ -95,5 +129,20 @@ namespace PuzzleDriver
 			tilePuzzle.MakeRandomMove(n);
 			tilePuzzle.LoadButtonsFromArray(tileButtonList);
 		}
+
+		private void HeartbeatTmr_Tick(object sender, EventArgs e)
+		{
+			string now = DateTime.Now.ToString("s");
+			TimeLbl.Text = now;
+		}
+
+		public void Log(string format, params object[] args)
+		{
+			string now = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fff");
+			CrawlerRTB.Text += now + ": " + String.Format(format, args) + "\n";
+			CrawlerRTB.Select(CrawlerRTB.Text.Length - 1, 0);
+			CrawlerRTB.ScrollToCaret();
+		}
+
 	}
 }
