@@ -40,6 +40,8 @@ namespace PuzzleDriver
 			this.ExitBtn = new System.Windows.Forms.Button();
 			this.TimeLbl = new System.Windows.Forms.Label();
 			this.CrawlerRTB = new System.Windows.Forms.RichTextBox();
+			this.TryDeepSolveBtn = new System.Windows.Forms.Button();
+			this.NumDeepSolvesTxt = new System.Windows.Forms.TextBox();
 			this.SuspendLayout();
 			// 
 			// SetupBtn
@@ -98,7 +100,7 @@ namespace PuzzleDriver
 			// 
 			// RandomMoveBtn
 			// 
-			this.RandomMoveBtn.Location = new System.Drawing.Point(12, 84);
+			this.RandomMoveBtn.Location = new System.Drawing.Point(12, 72);
 			this.RandomMoveBtn.Name = "RandomMoveBtn";
 			this.RandomMoveBtn.Size = new System.Drawing.Size(98, 46);
 			this.RandomMoveBtn.TabIndex = 4;
@@ -108,7 +110,7 @@ namespace PuzzleDriver
 			// 
 			// NumRandomMovesTxt
 			// 
-			this.NumRandomMovesTxt.Location = new System.Drawing.Point(116, 98);
+			this.NumRandomMovesTxt.Location = new System.Drawing.Point(116, 72);
 			this.NumRandomMovesTxt.Name = "NumRandomMovesTxt";
 			this.NumRandomMovesTxt.Size = new System.Drawing.Size(86, 20);
 			this.NumRandomMovesTxt.TabIndex = 5;
@@ -147,11 +149,31 @@ namespace PuzzleDriver
 			this.CrawlerRTB.TabIndex = 8;
 			this.CrawlerRTB.Text = "";
 			// 
+			// TryDeepSolveBtn
+			// 
+			this.TryDeepSolveBtn.Location = new System.Drawing.Point(12, 124);
+			this.TryDeepSolveBtn.Name = "TryDeepSolveBtn";
+			this.TryDeepSolveBtn.Size = new System.Drawing.Size(98, 21);
+			this.TryDeepSolveBtn.TabIndex = 9;
+			this.TryDeepSolveBtn.Text = "Try Deep Solve";
+			this.TryDeepSolveBtn.UseVisualStyleBackColor = true;
+			this.TryDeepSolveBtn.Click += new System.EventHandler(this.TryDeepSolveBtn_Click);
+			// 
+			// NumDeepSolvesTxt
+			// 
+			this.NumDeepSolvesTxt.Location = new System.Drawing.Point(116, 125);
+			this.NumDeepSolvesTxt.Name = "NumDeepSolvesTxt";
+			this.NumDeepSolvesTxt.Size = new System.Drawing.Size(86, 20);
+			this.NumDeepSolvesTxt.TabIndex = 10;
+			this.NumDeepSolvesTxt.Text = "10";
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(573, 599);
+			this.Controls.Add(this.NumDeepSolvesTxt);
+			this.Controls.Add(this.TryDeepSolveBtn);
 			this.Controls.Add(this.CrawlerRTB);
 			this.Controls.Add(this.TimeLbl);
 			this.Controls.Add(this.ExitBtn);
@@ -183,6 +205,8 @@ namespace PuzzleDriver
 		private System.Windows.Forms.Button ExitBtn;
 		private System.Windows.Forms.Label TimeLbl;
 		private System.Windows.Forms.RichTextBox CrawlerRTB;
+		private System.Windows.Forms.Button TryDeepSolveBtn;
+		private System.Windows.Forms.TextBox NumDeepSolvesTxt;
 	}
 }
 

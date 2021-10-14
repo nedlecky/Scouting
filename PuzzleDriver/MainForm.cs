@@ -144,5 +144,13 @@ namespace PuzzleDriver
 			CrawlerRTB.ScrollToCaret();
 		}
 
+		private void TryDeepSolveBtn_Click(object sender, EventArgs e)
+		{
+			int n = 1;
+
+			n = Int32.Parse(NumDeepSolvesTxt.Text);
+			tilePuzzle.TryDeepSolve(n);
+			//tilePuzzle.LoadButtonsFromArray(tileButtonList);
+		}
 	}
 }

@@ -151,5 +151,11 @@ namespace PuzzleDriver
 			}
 			return true;
 		}
+		public bool TryDeepSolve(int nMoves = 1)
+		{
+			mainForm.Log("TryDeepSolve({0})", nMoves);
+
+			return true;
+		}
 	}
 }
